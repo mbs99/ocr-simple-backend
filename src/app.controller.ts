@@ -25,14 +25,13 @@ export class AppController {
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('files'))
-  uploadFile(@UploadedFiles() files: Array<Express.Multer.File>,
+  uploadFile(
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Res() response: Response,
   ) {
-    console.log(files);
-
     const img2pdf_opts = files.map((file) => file.path).join(' ');
 
-    const img2pdf = exec(`img2pdf ${img2pdf_opts} out.pdf`);
+    const img2pdf = exec(`img2pdf ${img2pdf_opts} -o out.pdf`);
 
     img2pdf.on('exit', () => {
       const ocrmypdf = exec('ocrmypdf out.pdf out.pdf');
