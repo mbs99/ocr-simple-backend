@@ -24,7 +24,7 @@ export class AppController {
   }
 
   @Post('upload')
-  @UseInterceptors(FilesInterceptor('files'))
+  @UseInterceptors(FilesInterceptor('files', 5, { dest: './uploads' }))
   uploadFile(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Res() response: Response,
