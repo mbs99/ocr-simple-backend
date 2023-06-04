@@ -11,8 +11,9 @@ import { AppService } from './app.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { exec } from 'child_process';
 import { Response } from 'express';
-import { createReadStream } from 'fs';
+import { createReadStream, unlink } from 'fs';
 import { join } from 'path';
+import { temporaryFile } from 'tempy';
 
 @Controller()
 export class AppController {
@@ -29,18 +30,27 @@ export class AppController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Res() response: Response,
   ) {
+    const tempfile = temporaryFile({ extension: 'pdf' });
+
     const img2pdf_opts = files.map((file) => file.path).join(' ');
 
-    const img2pdf = exec(`img2pdf ${img2pdf_opts} -o out.pdf`);
+    const img2pdf = exec(`img2pdf ${img2pdf_opts} -o ${tempfile}`);
 
     img2pdf.on('exit', (code) => {
       if (0 == code) {
-        const ocrmypdf = exec('ocrmypdf out.pdf out.pdf');
+        const ocrmypdf = exec('ocrmypdf -l deu ${tempfile} ${tempfile}');
 
         ocrmypdf.on('exit', (code) => {
           if (0 == code) {
-            const file = createReadStream(join(process.cwd(), 'out.pdf'));
-            file.pipe(response);
+            const result = createReadStream(join(process.cwd(), tempfile));
+            result.on('end', () => {
+              unlink(tempfile, () => {
+                // file deleted
+              });
+            });
+            result.pipe(response);
+          } else {
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
           }
         });
       } else {
