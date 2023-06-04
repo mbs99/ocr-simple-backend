@@ -13,7 +13,6 @@ import { exec } from 'child_process';
 import { Response } from 'express';
 import { createReadStream, unlink } from 'fs';
 import { join } from 'path';
-import { temporaryFile } from 'tempy';
 
 @Controller()
 export class AppController {
@@ -26,15 +25,16 @@ export class AppController {
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('files', 5, { dest: './uploads' }))
-  uploadFile(
+  async uploadFile(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Res() response: Response,
   ) {
-    const tempfile = temporaryFile({ extension: 'pdf' });
+    const tempfile = (await import('tempfile')).default;
+    const imagesPdfFile = tempfile({ extension: 'pdf' });
 
     const img2pdf_opts = files.map((file) => file.path).join(' ');
 
-    const img2pdf = exec(`img2pdf ${img2pdf_opts} -o ${tempfile}`);
+    const img2pdf = exec(`img2pdf ${img2pdf_opts} -o ${imagesPdfFile}`);
 
     img2pdf.on('exit', (code) => {
       if (0 == code) {
@@ -42,9 +42,9 @@ export class AppController {
 
         ocrmypdf.on('exit', (code) => {
           if (0 == code) {
-            const result = createReadStream(join(process.cwd(), tempfile));
+            const result = createReadStream(join(process.cwd(), imagesPdfFile));
             result.on('end', () => {
-              unlink(tempfile, () => {
+              unlink(imagesPdfFile, () => {
                 // file deleted
               });
             });
