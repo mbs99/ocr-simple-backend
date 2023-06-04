@@ -31,6 +31,7 @@ export class AppController {
   ) {
     const tempfile = (await import('tempfile')).default;
     const imagesPdfFile = tempfile({ extension: 'pdf' });
+    console.log(imagesPdfFile);
 
     const img2pdf_opts = files.map((file) => file.path).join(' ');
 
@@ -45,14 +46,13 @@ export class AppController {
 
     img2pdf.on('exit', (code) => {
       if (0 == code) {
-        const ocrmypdf = exec(
-          `ocrmypdf -l deu ${imagesPdfFile} ${imagesPdfFile}`,
-          (error, stdout, stderr) => {
-            if (error) {
-              console.log('STDOUT:', stdout, ', STDERR:', stderr);
-            }
-          },
-        );
+        const ocrmypdfCmdline = `ocrmypdf -l deu ${imagesPdfFile} ${imagesPdfFile}`;
+        console.log(ocrmypdfCmdline);
+        const ocrmypdf = exec(ocrmypdfCmdline, (error, stdout, stderr) => {
+          if (error) {
+            console.log('STDOUT:', stdout, ', STDERR:', stderr);
+          }
+        });
 
         ocrmypdf.on('exit', (code) => {
           if (0 == code) {
