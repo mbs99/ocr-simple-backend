@@ -46,7 +46,7 @@ export class AppController {
     img2pdf.on('exit', (code) => {
       if (0 == code) {
         const ocrmypdf = exec(
-          'ocrmypdf -l deu ${imagesPdfFile} ${imagesPdfFile}',
+          `ocrmypdf -l deu ${imagesPdfFile} ${imagesPdfFile}`,
           (error, stdout, stderr) => {
             if (error) {
               console.log('STDOUT:', stdout, ', STDERR:', stderr);
