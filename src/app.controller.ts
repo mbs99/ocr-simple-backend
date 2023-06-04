@@ -34,11 +34,21 @@ export class AppController {
 
     const img2pdf_opts = files.map((file) => file.path).join(' ');
 
-    const img2pdf = exec(`img2pdf ${img2pdf_opts} -o ${imagesPdfFile}`);
+    const img2pdf = exec(
+      `img2pdf ${img2pdf_opts} -o ${imagesPdfFile}`,
+      (error, stdout, stderr) => {
+        console.log('STDOUT:', stdout, ', STDERR:', stderr);
+      },
+    );
 
     img2pdf.on('exit', (code) => {
       if (0 == code) {
-        const ocrmypdf = exec('ocrmypdf -l deu ${tempfile} ${tempfile}');
+        const ocrmypdf = exec(
+          'ocrmypdf -l deu ${tempfile} ${tempfile}',
+          (error, stdout, stderr) => {
+            console.log('STDOUT:', stdout, ', STDERR:', stderr);
+          },
+        );
 
         ocrmypdf.on('exit', (code) => {
           if (0 == code) {
