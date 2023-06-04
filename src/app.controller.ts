@@ -37,16 +37,20 @@ export class AppController {
     const img2pdf = exec(
       `img2pdf ${img2pdf_opts} -o ${imagesPdfFile}`,
       (error, stdout, stderr) => {
-        console.log('STDOUT:', stdout, ', STDERR:', stderr);
+        if (error) {
+          console.log('STDOUT:', stdout, ', STDERR:', stderr);
+        }
       },
     );
 
     img2pdf.on('exit', (code) => {
       if (0 == code) {
         const ocrmypdf = exec(
-          'ocrmypdf -l deu ${tempfile} ${tempfile}',
+          'ocrmypdf -l deu ${imagesPdfFile} ${imagesPdfFile}',
           (error, stdout, stderr) => {
-            console.log('STDOUT:', stdout, ', STDERR:', stderr);
+            if (error) {
+              console.log('STDOUT:', stdout, ', STDERR:', stderr);
+            }
           },
         );
 
