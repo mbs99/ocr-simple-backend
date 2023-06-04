@@ -1,0 +1,6 @@
+doctype html
+body
+  p Welcome to #{title}
+    form(method='post', enctype='multipart/form-data', action='/upload')
+      input(type='file', name='files', multiple)
+      input(type='submit', name='uploadimage', value='Upload Image')

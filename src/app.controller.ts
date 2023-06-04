@@ -19,7 +19,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
+  getApp(): string {
     return this.appService.getHello();
   }
 
@@ -33,13 +33,19 @@ export class AppController {
 
     const img2pdf = exec(`img2pdf ${img2pdf_opts} -o out.pdf`);
 
-    img2pdf.on('exit', () => {
-      const ocrmypdf = exec('ocrmypdf out.pdf out.pdf');
+    img2pdf.on('exit', (code) => {
+      if (0 == code) {
+        const ocrmypdf = exec('ocrmypdf out.pdf out.pdf');
 
-      ocrmypdf.on('exit', () => {
-        const file = createReadStream(join(process.cwd(), 'out.pdf'));
-        file.pipe(response);
-      });
+        ocrmypdf.on('exit', (code) => {
+          if (0 == code) {
+            const file = createReadStream(join(process.cwd(), 'out.pdf'));
+            file.pipe(response);
+          }
+        });
+      } else {
+        response.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+      }
     });
   }
 }
