@@ -57,11 +57,6 @@ export class AppController {
         ocrmypdf.on('exit', (code) => {
           if (0 == code) {
             const result = createReadStream(join(process.cwd(), imagesPdfFile));
-            result.on('end', () => {
-              unlink(imagesPdfFile, () => {
-                // file deleted
-              });
-            });
             result.pipe(response);
           } else {
             response.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
