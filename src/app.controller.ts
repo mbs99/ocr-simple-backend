@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Logger,
   Post,
   Res,
   UploadedFiles,
@@ -12,15 +13,16 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { exec } from 'child_process';
 import { Response } from 'express';
 import { createReadStream, unlink } from 'fs';
-import { join } from 'path';
 
 @Controller()
 export class AppController {
+  private readonly logger = new Logger(AppController.name);
+
   constructor(private readonly appService: AppService) {}
 
   @Get()
   getApp(): string {
-    return this.appService.getHello();
+    return this.appService.getIndex();
   }
 
   @Post('upload')
@@ -39,7 +41,7 @@ export class AppController {
       `img2pdf ${img2pdf_opts} -o ${imagesPdfFile}`,
       (error, stdout, stderr) => {
         if (error) {
-          console.log('STDOUT:', stdout, ', STDERR:', stderr);
+          this.logger.log('STDOUT:', stdout, ', STDERR:', stderr);
         }
       },
     );
@@ -50,7 +52,7 @@ export class AppController {
         console.log(ocrmypdfCmdline);
         const ocrmypdf = exec(ocrmypdfCmdline, (error, stdout, stderr) => {
           if (error) {
-            console.log('STDOUT:', stdout, ', STDERR:', stderr);
+            this.logger.log('STDOUT:', stdout, ', STDERR:', stderr);
           }
         });
 
