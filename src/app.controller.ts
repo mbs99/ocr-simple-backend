@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpStatus,
@@ -30,10 +31,23 @@ export class AppController {
   async uploadFile(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Res() response: Response,
+    @Body() form,
   ) {
+
+    this.logger.log(form);
+
     const tempfile = (await import('tempfile')).default;
     const imagesPdfFile = tempfile({ extension: 'pdf' });
-    console.log(imagesPdfFile);
+    this.logger.log(imagesPdfFile);
+
+    const filePageMap = new Map<number, string>();
+    files.forEach((file) => {
+      const name = file.originalname;
+      filePageMap.set(form[name], name);
+    });
+
+    const sortedFilePageMap = new Map([...filePageMap.entries()].sort());
+
 
     const img2pdf_opts = files.map((file) => file.path).join(' ');
 

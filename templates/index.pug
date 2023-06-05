@@ -1,7 +1,22 @@
 doctype html
-body
-  p Welcome to #{title}
-    form(method='post', enctype='multipart/form-data', action='/upload')
-      input(type='file', name='files', multiple)
-      input(type='reset', value='Reset')
-      input(type='submit', name='uploadimage', value='Upload Images')
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width', initial-scale=1)
+    title Bootstrap demo
+    link(href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css', rel='stylesheet', integrity='sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM' crossorigin='anonymous')
+  body
+    form(method='post', enctype='multipart/form-data', action='/upload', class='container' id='uploadForm')
+      div(class='row text-center mb-3')
+        h1 Welcome to #{title}
+      div(class='row mb-3')
+        div(class='col')
+          input(type='file', name='files', multiple, class='form-control', id='files')
+      div(class='row mb-3' id='preview')
+      div(class='row mb-3')
+        div(class='col')
+          input(type='reset', value='Reset', class='btn btn-secondary')
+          input(type='submit', name='uploadimage', value='Upload Images', class='btn btn-primary')
+    script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', integrity='sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz', crossorigin='anonymous')
+    script(src='/assets/custom.js')
+

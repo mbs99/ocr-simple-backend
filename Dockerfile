@@ -18,4 +18,5 @@ WORKDIR /home/node
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 ADD templates ./templates
+ADD assets ./assets
 ENTRYPOINT [ "node", "dist/main.js" ]
