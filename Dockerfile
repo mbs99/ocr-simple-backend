@@ -11,9 +11,11 @@ FROM debian
 RUN apt update
 RUN apt install -y curl
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-RUN apt install -y nodejs ocrmypdf img2pdf
-USER nodeuser
-WORKDIR /app
+RUN apt install -y nodejs ocrmypdf img2pdf tesseract-ocr-deu tesseract-ocr-eng
+RUN adduser --quiet --disabled-password --shell /bin/bash --home /home/node --gecos "User" node
+USER node
+WORKDIR /home/node
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
+ADD templates ./templates
 ENTRYPOINT [ "node", "dist/main.js" ]
