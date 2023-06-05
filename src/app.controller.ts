@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpStatus,
   Logger,
   Post,
   Res,
@@ -11,9 +10,7 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { exec } from 'child_process';
 import { Response } from 'express';
-import { createReadStream, unlink } from 'fs';
 
 @Controller()
 export class AppController {
