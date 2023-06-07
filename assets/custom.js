@@ -9,6 +9,7 @@ upload.onchange = (evt) => {
 
       const pagePosSelect = document.createElement('select');
       pagePosSelect.name = `${file.name}`;
+      pagePosSelect.classList.add('page');
       for (let i = 0; i < files.length; i++) {
         var option = document.createElement('option');
         option.value = i + 1;
@@ -42,4 +43,27 @@ var uploadForm = document.getElementById('uploadForm');
 uploadForm.onreset = () => {
   const preview = document.getElementById('preview');
   preview?.replaceChildren();
+
+  const alertBox = document.getElementById('alert');
+  alertBox.classList.add('d-none');
+};
+
+uploadForm.onsubmit = (event) => {
+  const alertBox = document.getElementById('alert');
+  const pageControls = [...document.getElementsByClassName('page')];
+  const uniquePageNums = new Set();
+  pageControls.forEach((control) => {
+    uniquePageNums.add(control.value);
+  });
+
+  if (uniquePageNums.size != pageControls.length) {
+    if (alertBox) {
+      alertBox.classList.remove('d-none');
+    }
+    event.preventDefault();
+  } else {
+    if (alertBox) {
+      alertBox.classList.add('d-none');
+    }
+  }
 };
